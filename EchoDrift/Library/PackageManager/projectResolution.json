@@ -9,6 +9,26 @@
     "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.10f1\\Editor\\Data\\Resources\\PackageManager\\BuiltInPackages\\BuiltInPackagesCombined.sha1"
   ],
   "outputs": {
+    "com.unity.2d.pixel-perfect@5.1.1": {
+      "name": "com.unity.2d.pixel-perfect",
+      "displayName": "2D Pixel Perfect",
+      "resolvedPath": "C:\\Users\\PC\\OneDrive\\Рабочий стол\\EchoDrift\\EchoDrift\\Library\\PackageCache\\com.unity.2d.pixel-perfect@09d99455b901",
+      "fingerprint": "09d99455b9018d7a152bb766d42b2569236a7b4a",
+      "editorCompatibility": "2021.3.0a1",
+      "version": "5.1.1",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.2d.sprite@1.0.0": {
+      "name": "com.unity.2d.sprite",
+      "displayName": "2D Sprite",
+      "resolvedPath": "C:\\Users\\PC\\OneDrive\\Рабочий стол\\EchoDrift\\EchoDrift\\Library\\PackageCache\\com.unity.2d.sprite@d14b9d497a24",
+      "fingerprint": "d14b9d497a24d5fc6a731faaacfb216ac084478e",
+      "editorCompatibility": "2019.2.0a1",
+      "version": "1.0.0",
+      "source": "builtin",
+      "testable": false
+    },
     "com.unity.ai.navigation@2.0.10": {
       "name": "com.unity.ai.navigation",
       "displayName": "AI Navigation",
