@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,33 +6,37 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
-    [SerializeField] private float crouchSpeed;
 
     [SerializeField] private float jumpForce; // сила прыжка
     [SerializeField] private float jumpHoldTime = 0.4f; // окно времени, в которое игрок может отпустить кнопку для низкого прыжка
     [SerializeField] private float jumpHoldMultiplier = 0.2f; // на сколько уменьшить скорость, если отпустить рано
     [SerializeField] private int maxJumps = 2; // макс. кол-во прыжков
 
+    [SerializeField] private float dashSpeed;
+    [SerializeField] private float dashDuration;
+    [SerializeField] private float dashCooldown;
+
+
+
     private PlayerActions playerActions;
     private InputAction move;
     private InputAction run;
     private InputAction jump;
-    private InputAction crouch;
+    private InputAction dash;
     private Rigidbody2D rb;
-    private BoxCollider2D boxCollider;
-
-    private bool IsCrouching;
 
     private int jumpsRemaining; // сколько прыжков осталось
     private bool isJumpHolding; // зажата ли кнопка прыжка
     private float jumpHoldTimer; // сколько времени зажат прыжок
+
+    private bool canDash = true;
+    private bool isDashing = false;
 
 
 
     void Awake()
     {
         if (!TryGetComponent<Rigidbody2D>(out rb)) Debug.LogError("Rigidbody2D не найден у " + gameObject.name);
-        if (!TryGetComponent<BoxCollider2D>(out boxCollider)) Debug.LogError("Collider2D не найден у " + gameObject.name);
     }
 
 
@@ -46,14 +51,16 @@ public class PlayerController : MonoBehaviour
         run.Enable();
 
         jump = playerActions.PlayerController.Jump;
-        jump.Enable(); 
+        jump.Enable();
 
-        crouch = playerActions.PlayerController.Crouch;
-        crouch.Enable();
+        dash = playerActions.PlayerController.Dash;
+        dash.Enable();
     }
 
     void Update()
     {
+        if (dash.triggered && canDash && !isDashing) StartCoroutine(Dash());
+
         // НАЧАЛО ПРЫЖКА (когда игрок нажал кнопку)
         if (jump.triggered)
         {
@@ -85,10 +92,14 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = velocity;
             isJumpHolding = false;
         }
+
+        
     }
 
     void FixedUpdate()
     {
+        if (isDashing) return;
+
         Vector2 axis = move.ReadValue<Vector2>();
 
         if (axis.x != 0)
@@ -96,8 +107,6 @@ public class PlayerController : MonoBehaviour
             if (run.IsPressed()) Run(axis);
             else Move(axis);
         }
-        else if (crouch.IsPressed() && !IsCrouching) EnterCrouch(boxCollider);
-        else if (!crouch.IsPressed() && IsCrouching) ExitCrouch(boxCollider);
         else
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
@@ -108,34 +117,7 @@ public class PlayerController : MonoBehaviour
 
     private void Run(Vector2 axis) => rb.linearVelocity = new Vector2(axis.x * runSpeed, rb.linearVelocity.y);
 
-    private void EnterCrouch(BoxCollider2D coll)
-    {
-        if (coll == null) return;
-        else
-        {
-            IsCrouching = true;
-            Vector2 newSize = coll.size;
-            newSize.y = newSize.y / 2;
-            coll.size = newSize;
-
-
-        }
-    }
-
-    private void ExitCrouch(BoxCollider2D coll)
-    {
-        if(coll == null) return;
-        else
-        {
-            IsCrouching = false;
-            Vector2 newSize = coll.size;
-            newSize.y = newSize.y * 2;
-            coll.size = newSize;
-        }
-    }
-
-
-
+    
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -144,5 +126,41 @@ public class PlayerController : MonoBehaviour
             jumpsRemaining = maxJumps;
             isJumpHolding = false;
         }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            jumpsRemaining = maxJumps;
+        }
+    }
+
+    private IEnumerator Dash()
+    {
+        Debug.Log("DASH");
+        isDashing = true;
+        canDash = false;
+
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0;
+
+        float direction = move.ReadValue<Vector2>().x;
+
+        if(direction == 0)
+        {
+            direction = transform.localScale.x > 0 ? 1 : -1;
+        }
+
+        rb.linearVelocity = new Vector2(direction * dashSpeed, 0);
+
+        yield return new WaitForSeconds(dashDuration);
+
+        rb.gravityScale = originalGravity;
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        isDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 }
