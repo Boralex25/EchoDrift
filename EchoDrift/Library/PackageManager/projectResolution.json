@@ -39,6 +39,16 @@
       "source": "registry",
       "testable": false
     },
+    "com.unity.cinemachine@3.1.6": {
+      "name": "com.unity.cinemachine",
+      "displayName": "Cinemachine",
+      "resolvedPath": "C:\\Users\\PC\\OneDrive\\Рабочий стол\\EchoDrift\\EchoDrift\\Library\\PackageCache\\com.unity.cinemachine@285f38545487",
+      "fingerprint": "285f385454873b7d4509f804a9b4c840e834066a",
+      "editorCompatibility": "2022.3.0a1",
+      "version": "3.1.6",
+      "source": "registry",
+      "testable": false
+    },
     "com.unity.collab-proxy@2.11.3": {
       "name": "com.unity.collab-proxy",
       "displayName": "Unity Version Control",
@@ -467,6 +477,16 @@
       "source": "builtin",
       "testable": false
     },
+    "com.unity.splines@2.8.3": {
+      "name": "com.unity.splines",
+      "displayName": "Splines",
+      "resolvedPath": "C:\\Users\\PC\\OneDrive\\Рабочий стол\\EchoDrift\\EchoDrift\\Library\\PackageCache\\com.unity.splines@56b2023b4b9f",
+      "fingerprint": "56b2023b4b9fd77fdc5b5ed3a4b62c388d76931c",
+      "editorCompatibility": "2022.3.0a1",
+      "version": "2.8.3",
+      "source": "registry",
+      "testable": false
+    },
     "com.unity.searcher@4.9.4": {
       "name": "com.unity.searcher",
       "displayName": "Searcher",
@@ -504,6 +524,16 @@
       "fingerprint": "aea9d3bd5e19f2a90fc3a39919974a5f3613a159",
       "editorCompatibility": "2022.3.20f1",
       "version": "2.6.2",
+      "source": "registry",
+      "testable": false
+    },
+    "com.unity.settings-manager@2.1.1": {
+      "name": "com.unity.settings-manager",
+      "displayName": "Settings Manager",
+      "resolvedPath": "C:\\Users\\PC\\OneDrive\\Рабочий стол\\EchoDrift\\EchoDrift\\Library\\PackageCache\\com.unity.settings-manager@0b8638c5ce86",
+      "fingerprint": "0b8638c5ce86009d785da17b17aaf629047f64ce",
+      "editorCompatibility": "2022.3.0a1",
+      "version": "2.1.1",
       "source": "registry",
       "testable": false
     },
