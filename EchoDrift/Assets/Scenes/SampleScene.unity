@@ -430,7 +430,7 @@ MonoBehaviour:
   heartThreeQuarters: {fileID: 21300000, guid: 4444a1c6a6cd9784d8f650baa4f430d6, type: 3}
   heartHalf: {fileID: 21300000, guid: 761f758c50c598c40b1ba5cf5ef274b8, type: 3}
   heartQuarter: {fileID: 21300000, guid: 761f758c50c598c40b1ba5cf5ef274b8, type: 3}
-  heartEmpty: {fileID: 21300000, guid: 761f758c50c598c40b1ba5cf5ef274b8, type: 3}
+  heartEmpty: {fileID: 21300000, guid: db1c997e5048b8247af3e98a0bb5974f, type: 3}
 --- !u!4 &226076537
 Transform:
   m_ObjectHideFlags: 0

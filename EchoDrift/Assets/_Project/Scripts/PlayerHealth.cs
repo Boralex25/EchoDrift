@@ -48,14 +48,14 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log($"Здоровье стало: {(float)currentHealth / 4}");  // DEBUG
 
-        if(currentHealth <= 0)
+        onHealthChanged?.Invoke(currentHealth, maxHealth);
+        StartInvicibility();
+
+        if (currentHealth <= 0)
         {
             Die();
             return;
         }
-
-        onHealthChanged?.Invoke(currentHealth, maxHealth);
-        StartInvicibility();
     }
 
     private void StartInvicibility()
