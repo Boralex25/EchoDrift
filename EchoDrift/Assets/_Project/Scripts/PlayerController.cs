@@ -16,7 +16,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashDuration;
     [SerializeField] private float dashCooldown;
 
+    [SerializeField] private float torchMaxTime;
 
+    private float torchCurrentTime;
+    private bool isTorchLit = false;
 
     private PlayerActions playerActions;
     private InputAction move;
@@ -55,6 +58,9 @@ public class PlayerController : MonoBehaviour
 
         dash = playerActions.PlayerController.Dash;
         dash.Enable();
+
+        torchCurrentTime = torchMaxTime;
+        UpdateTorchUI();
     }
 
     void Update()
@@ -93,7 +99,13 @@ public class PlayerController : MonoBehaviour
             isJumpHolding = false;
         }
 
-        
+        if (isTorchLit)
+        {
+            torchCurrentTime -= Time.deltaTime;
+            UpdateTorchUI();
+
+            if (torchCurrentTime <= 0) ExtinguishTorch();
+        }
     }
 
     void FixedUpdate()
@@ -162,5 +174,21 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
+    }
+
+    private void UpdateTorchUI()
+    {
+        if (UIManager.Instance != null) UIManager.Instance.UpdateTorchTimer(torchCurrentTime, torchMaxTime);
+    }
+
+    public void InginteTorch()
+    {
+        isTorchLit = true;
+        torchCurrentTime = torchMaxTime;
+    }
+
+    public void ExtinguishTorch()
+    {
+
     }
 }

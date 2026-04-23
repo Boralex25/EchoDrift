@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -17,7 +18,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Sprite heartQuarter;
     [SerializeField] private Sprite heartEmpty;
 
+    [Header("Local mechanic")]
+    [SerializeField] private Image torchFillImg;
+    [SerializeField] private TextMeshProUGUI torchTimerText;
+
     private List<Image> heartImages = new List<Image>();
+
+    
 
 
     private void Awake()
@@ -85,5 +92,17 @@ public class UIManager : MonoBehaviour
         ;
 
         heartImage.sprite = selectedSprite;
+    }
+
+    public void UpdateTorchTimer(float currentTime, float maxTime)
+    {
+        int timeForText = Mathf.CeilToInt(currentTime);
+
+        torchTimerText.text = $"{timeForText} сек";
+
+        if(torchFillImg != null && torchFillImg.type == Image.Type.Filled) torchFillImg.fillAmount = currentTime / maxTime;
+
+        if (currentTime <= 5) torchTimerText.color = Color.red;
+        else torchTimerText.color = Color.white;
     }
 }
