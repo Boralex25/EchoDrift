@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,16 +18,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashCooldown;
 
     [SerializeField] private float torchMaxTime;
+    [SerializeField] private Transform interactPoint;
+    [SerializeField] private float interactRadius = 1f;
 
     private float torchCurrentTime;
-    private bool isTorchLit = false;
+    private bool isTorchLit = true;
 
     private PlayerActions playerActions;
     private InputAction move;
     private InputAction run;
     private InputAction jump;
     private InputAction dash;
+    private InputAction interact;
     private Rigidbody2D rb;
+    private Light2D torchLight;
 
     private int jumpsRemaining; // сколько прыжков осталось
     private bool isJumpHolding; // зажата ли кнопка прыжка
@@ -40,6 +45,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         if (!TryGetComponent<Rigidbody2D>(out rb)) Debug.LogError("Rigidbody2D не найден у " + gameObject.name);
+        if(!TryGetComponent<Light2D>(out torchLight)) Debug.Log("Компонент света не найден у " + gameObject.name);
     }
 
 
@@ -59,8 +65,11 @@ public class PlayerController : MonoBehaviour
         dash = playerActions.PlayerController.Dash;
         dash.Enable();
 
+        interact = playerActions.PlayerController.Interact;
+        interact.Enable();
+
         torchCurrentTime = torchMaxTime;
-        UpdateTorchUI();
+        if (UIManager.Instance != null) UIManager.Instance.UpdateTorchTimer(torchCurrentTime, torchMaxTime);
     }
 
     void Update()
@@ -99,13 +108,23 @@ public class PlayerController : MonoBehaviour
             isJumpHolding = false;
         }
 
-        if (isTorchLit)
-        {
-            torchCurrentTime -= Time.deltaTime;
-            UpdateTorchUI();
+        //if (isTorchLit)
+        //{
+        //    torchCurrentTime -= Time.deltaTime;
+        //    UpdateTorchUI();
+        //    Debug.Log("Вызов UpdateTorchUI()");
 
-            if (torchCurrentTime <= 0) ExtinguishTorch();
+        //    if (torchCurrentTime <= 0) ExtinguishTorch();
+        //}
+
+        if (interact.IsPressed())
+        {
+            TryInteract();
         }
+
+        UpdateTorch();
+
+
     }
 
     void FixedUpdate()
@@ -176,19 +195,54 @@ public class PlayerController : MonoBehaviour
         canDash = true;
     }
 
-    private void UpdateTorchUI()
-    {
-        if (UIManager.Instance != null) UIManager.Instance.UpdateTorchTimer(torchCurrentTime, torchMaxTime);
-    }
+    //private void UpdateTorchUI()
+    //{
+    //    if (UIManager.Instance != null) UIManager.Instance.UpdateTorchTimer(torchCurrentTime, torchMaxTime);
+    //}
 
     public void InginteTorch()
     {
         isTorchLit = true;
         torchCurrentTime = torchMaxTime;
+
+        if (torchLight != null) torchLight.enabled = true;
+
+        UIManager.Instance.UpdateTorchTimer(torchCurrentTime, torchMaxTime);
     }
 
     public void ExtinguishTorch()
     {
+        isTorchLit = false;
 
+        if(torchLight != null) torchLight.enabled = false;
+    }
+
+    private void TryInteract()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(interactPoint.position, interactRadius);
+
+        foreach(Collider2D hit in hits)
+        {
+            IInteractable interactable = hit.GetComponent<IInteractable>();
+
+            if(interactable  != null)
+            {
+                interactable.Interact(this);
+                break;
+            }
+        }
+    }
+
+    private void UpdateTorch()
+    {
+        if (!isTorchLit) return;
+
+        torchCurrentTime -= Time.deltaTime;
+        UIManager.Instance.UpdateTorchTimer(torchCurrentTime, torchMaxTime);
+
+        if(torchCurrentTime <= 0)
+        {
+            ExtinguishTorch();
+        }
     }
 }

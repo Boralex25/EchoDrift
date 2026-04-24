@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance;
+    public static UIManager Instance { get; private set; }
 
     [Header("Health")]
     [SerializeField] private Transform healthContainer;
@@ -22,10 +23,15 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image torchFillImg;
     [SerializeField] private TextMeshProUGUI torchTimerText;
 
+    [Header("Hint")]
+    [SerializeField] private TextMeshProUGUI hintText;
+    [SerializeField] private float hintDuration;
+
     private List<Image> heartImages = new List<Image>();
 
-    
+    private Coroutine hintCoroutine;
 
+    
 
     private void Awake()
     {
@@ -37,6 +43,11 @@ public class UIManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        hintText.text = "";
     }
 
     public void InitializeHealth(int maxHealthInUnits)
@@ -88,8 +99,7 @@ public class UIManager : MonoBehaviour
             1 => heartQuarter,
             0 => heartEmpty,
             _ => heartEmpty
-        }
-        ;
+        };
 
         heartImage.sprite = selectedSprite;
     }
@@ -99,10 +109,47 @@ public class UIManager : MonoBehaviour
         int timeForText = Mathf.CeilToInt(currentTime);
 
         torchTimerText.text = $"{timeForText} сек";
+        //Debug.Log($"{timeForText} сек");
 
         if(torchFillImg != null && torchFillImg.type == Image.Type.Filled) torchFillImg.fillAmount = currentTime / maxTime;
 
         if (currentTime <= 5) torchTimerText.color = Color.red;
         else torchTimerText.color = Color.white;
+    }
+
+    public void ShowHint(string message, float duration = -1)
+    {
+        if (duration < 0) duration = hintDuration;
+
+        if(duration == 0)
+        {
+            if (hintCoroutine != null) StopCoroutine(hintCoroutine);
+
+            hintText.text = message;
+            hintText.gameObject.SetActive(true);
+            hintCoroutine = null;
+            return;
+        }
+
+        if (hintCoroutine != null) StopCoroutine(hintCoroutine);
+
+        hintText.text = message;
+        hintText.gameObject.SetActive(false);
+        hintCoroutine = StartCoroutine(HideHintAfterDuration(duration));
+        
+    }
+
+    public void HideHint()
+    {
+        if(hintCoroutine != null) StopCoroutine(hintCoroutine);
+        hintText?.gameObject.SetActive(false);
+        hintCoroutine = null;
+    }
+
+    private IEnumerator HideHintAfterDuration(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        hintText.gameObject.SetActive(false);
+        hintCoroutine = null;
     }
 }
