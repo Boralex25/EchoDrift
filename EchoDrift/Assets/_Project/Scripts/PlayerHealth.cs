@@ -9,10 +9,14 @@ public class PlayerHealth : MonoBehaviour
 
     private int currentHealth;
     private bool isInvicibility = false;
+
+
     private SpriteRenderer spriteRenderer;
 
     public UnityEvent<int, int> onHealthChanged;
     public UnityEvent onDeath;
+
+    //public int CurrentHealthInHearts => currentHealth / 4;
 
     void Awake()
     {

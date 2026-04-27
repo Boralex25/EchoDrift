@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform interactPoint;
     [SerializeField] private float interactRadius = 1f;
 
+    [SerializeField] private float knockbackDuration = 1.0f;
+
     private float torchCurrentTime;
     private bool isTorchLit = true;
 
@@ -33,12 +35,17 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Light2D torchLight;
 
+    public Light2D TorchLight => torchLight;
+
     private int jumpsRemaining; // сколько прыжков осталось
     private bool isJumpHolding; // зажата ли кнопка прыжка
     private float jumpHoldTimer; // сколько времени зажат прыжок
 
     private bool canDash = true;
     private bool isDashing = false;
+
+    private bool isKnockedBack;
+    private float knockbackEndTime;
 
 
 
@@ -103,7 +110,7 @@ public class PlayerController : MonoBehaviour
         {
             // уменьшение вертикальной скорости
             Vector2 velocity = rb.linearVelocity;
-            velocity.y *= jumpHoldMultiplier; //!
+            velocity.y *= jumpHoldMultiplier;   //!
             rb.linearVelocity = velocity;
             isJumpHolding = false;
         }
@@ -131,14 +138,16 @@ public class PlayerController : MonoBehaviour
     {
         if (isDashing) return;
 
+        if(isKnockedBack && Time.time >= knockbackEndTime) isKnockedBack = false;
+
         Vector2 axis = move.ReadValue<Vector2>();
 
-        if (axis.x != 0)
+        if (axis.x != 0 && !isKnockedBack)
         {
             if (run.IsPressed()) Run(axis);
             else Move(axis);
         }
-        else
+        else if(!isKnockedBack)
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         }
@@ -244,5 +253,17 @@ public class PlayerController : MonoBehaviour
         {
             ExtinguishTorch();
         }
+    }
+
+    public void ApplyKnockback(Vector2 direction, float force)
+    {
+        if (isKnockedBack) return;
+
+        isKnockedBack = true;
+        knockbackEndTime = Time.time + knockbackDuration;
+
+        rb.AddForce(direction * force, ForceMode2D.Impulse);
+
+        Debug.Log("игрок отброшен");
     }
 }

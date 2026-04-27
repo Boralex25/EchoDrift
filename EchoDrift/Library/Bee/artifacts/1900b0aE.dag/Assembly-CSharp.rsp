@@ -509,6 +509,7 @@
 "Assets/_Project/Scripts/IInteractable.cs"
 "Assets/_Project/Scripts/PlayerController.cs"
 "Assets/_Project/Scripts/PlayerHealth.cs"
+"Assets/_Project/Scripts/ShadowHerald.cs"
 "Assets/_Project/Scripts/TestDamage.cs"
 "Assets/_Project/Scripts/UIManager.cs"
 "Assets/_Project/Settings/PlayerActions.cs"
