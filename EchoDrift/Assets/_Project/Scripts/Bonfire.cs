@@ -18,14 +18,25 @@ public class Bonfire : MonoBehaviour, IInteractable
         UIManager.Instance.ShowHint("Факел зажжен!", 1.5f);     // DEBUG
     }
 
+    //private void OnTriggerEnter2D(Collider2D other)
+    //{
+    //    if(other.CompareTag("Player") && IsInteractable) UIManager.Instance.ShowHint(hintText, 0f);
+    //    Debug.Log("in collider");
+    //}
+
+    //private void OnTriggerExit2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Player")) UIManager.Instance.HideHint();
+    //}
+
+
     private void OnTriggerEnter2D(Collider2D other)
-    {
-        if(other.CompareTag("Player") && IsInteractable) UIManager.Instance.ShowHint(hintText, 0f);
-        Debug.Log("in collider");
+    { 
+        if(other.CompareTag("Player") && IsInteractable) HintManager.Instance.RegisterHint(this, hintText, priotiry: 4f, duration: 0);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player")) UIManager.Instance.HideHint();
+        if (other.CompareTag("Player")) HintManager.Instance.RemoveHintsFromSource(this);
     }
 }

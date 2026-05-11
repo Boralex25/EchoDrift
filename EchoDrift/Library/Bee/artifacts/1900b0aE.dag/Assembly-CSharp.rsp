@@ -506,6 +506,8 @@
 "Assets/TextMesh Pro/Examples & Extras/Scripts/WarpTextExample.cs"
 "Assets/TutorialInfo/Scripts/Readme.cs"
 "Assets/_Project/Scripts/Bonfire.cs"
+"Assets/_Project/Scripts/Checkpoint.cs"
+"Assets/_Project/Scripts/HintManager.cs"
 "Assets/_Project/Scripts/IInteractable.cs"
 "Assets/_Project/Scripts/PlayerController.cs"
 "Assets/_Project/Scripts/PlayerHealth.cs"

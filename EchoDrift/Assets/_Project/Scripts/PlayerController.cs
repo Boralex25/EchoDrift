@@ -46,6 +46,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isKnockedBack;
     private float knockbackEndTime;
+    private bool isInputBlocked;
 
 
 
@@ -124,7 +125,7 @@ public class PlayerController : MonoBehaviour
         //    if (torchCurrentTime <= 0) ExtinguishTorch();
         //}
 
-        if (interact.IsPressed())
+        if (!isInputBlocked && interact.IsPressed())
         {
             TryInteract();
         }
@@ -137,6 +138,8 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         if (isDashing) return;
+
+        if (isInputBlocked) return;
 
         if(isKnockedBack && Time.time >= knockbackEndTime) isKnockedBack = false;
 
@@ -230,16 +233,26 @@ public class PlayerController : MonoBehaviour
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(interactPoint.position, interactRadius);
 
+        IInteractable closestInteractable = null;
+        float closestDistance = Mathf.Pow(1000, 1000);
+
         foreach(Collider2D hit in hits)
         {
             IInteractable interactable = hit.GetComponent<IInteractable>();
 
             if(interactable  != null)
             {
-                interactable.Interact(this);
-                break;
+                float distance = Vector2.Distance(interactPoint.position, hit.transform.position);
+                
+                if(distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestInteractable = interactable;
+                }
             }
         }
+
+        if (closestInteractable != null) closestInteractable.Interact(this);
     }
 
     private void UpdateTorch()
@@ -266,4 +279,13 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("игрок отброшен");
     }
+
+    public void SetInputBlocked(bool blocked)
+    {
+        isInputBlocked = blocked;
+        Debug.Log($"PlayerController: Ввод {(blocked ? "заблокирован" : "разблокирован")}");
+    }
+
+    public bool IsInputEnabled => !isInputBlocked;
+
 }
