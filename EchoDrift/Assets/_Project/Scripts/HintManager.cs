@@ -147,6 +147,7 @@ public class HintManager : MonoBehaviour    // синглтон
 
         if (isDebugLogsEnabled) Debug.Log($"HintManager: добавлена подсказка '{text}' с приоритетом {priotiry}");
 
+        UpdateHintSelection();
     }
 
 
@@ -158,6 +159,7 @@ public class HintManager : MonoBehaviour    // синглтон
 
         if (removedCount > 0 && isDebugLogsEnabled) Debug.Log($"HintManager: удалено подсказок от {source.name} в кол-ве {removedCount}");
 
+        UpdateHintSelection();
     }
 
 

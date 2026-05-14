@@ -82,6 +82,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (isInputBlocked) return;
+
         if (dash.triggered && canDash && !isDashing) StartCoroutine(Dash());
 
         // НАЧАЛО ПРЫЖКА (когда игрок нажал кнопку)
@@ -137,9 +139,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isInputBlocked) return;
         if (isDashing) return;
 
-        if (isInputBlocked) return;
 
         if(isKnockedBack && Time.time >= knockbackEndTime) isKnockedBack = false;
 
@@ -284,6 +286,8 @@ public class PlayerController : MonoBehaviour
     {
         isInputBlocked = blocked;
         Debug.Log($"PlayerController: Ввод {(blocked ? "заблокирован" : "разблокирован")}");
+
+        if (isInputBlocked) rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
     public bool IsInputEnabled => !isInputBlocked;

@@ -16,7 +16,8 @@ public class PlayerHealth : MonoBehaviour
     public UnityEvent<int, int> onHealthChanged;
     public UnityEvent onDeath;
 
-    //public int CurrentHealthInHearts => currentHealth / 4;
+    public int MaxHealthInHealth => maxHealth / 4;
+    public int CurrentHealthInHearts => currentHealth / 4;
 
     void Awake()
     {

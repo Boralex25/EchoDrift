@@ -1,5 +1,8 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Checkpoint : MonoBehaviour, IInteractable
 {
@@ -13,7 +16,10 @@ public class Checkpoint : MonoBehaviour, IInteractable
     [SerializeField] private string checkpointName;
     [SerializeField] private string checkpointID;
 
-    [SerializeField] private float interactRadius = 0.5f;
+    [SerializeField] private TextMeshProUGUI currentHealthUI;
+    [SerializeField] private Button healButton;
+    [SerializeField] private static PlayerHealth _playerHealth;
+
 
     // СЕРИАЛИЗАЦИЯ ДЛЯ ДЕБАГА! НЕ МЕНЯТЬ В ИНСПЕКТОРЕ!
     [Header("НЕ МЕНЯТЬ! READ ONLY!")]
@@ -23,23 +29,28 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     private PlayerController _playerController;
 
-
     private void Awake()
     {
         if (player == null) player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if(player != null) _playerController = player.GetComponent<PlayerController>();
 
+        if(player != null) _playerHealth = player.GetComponent<PlayerHealth>();
+
         if (uiManager == null) uiManager = UIManager.Instance;
+
+        healButton?.onClick.AddListener(OnHealButtonClicked);
 
         if (checkpointSprite != null && isActivated)
         {
-            // добавить
+            // добавить (удалить?)
         }
 
         if(checkpointMenu != null) checkpointMenu.SetActive(false);
 
         Debug.Log("Инициализация чекпоинта");
+
+        Cursor.visible = false;
     }
 
     private void Update()
@@ -85,7 +96,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
         isMenuOpen = true;
 
-        Time.timeScale = 0.5f;
+        Time.timeScale = 0f;
 
         if (checkpointMenu != null) checkpointMenu.SetActive(true);
 
@@ -94,6 +105,10 @@ public class Checkpoint : MonoBehaviour, IInteractable
         _playerController?.SetInputBlocked(true);
 
         Debug.Log($"Checkpoint: открыто меню чекпоинта {checkpointName}");
+
+        UpdateHealUI();
+
+        Cursor.visible = true;
     }
 
     private void CloseMenu()
@@ -108,6 +123,8 @@ public class Checkpoint : MonoBehaviour, IInteractable
         _playerController?.SetInputBlocked(false);
 
         Debug.Log($"Checkpoint: закрыто меню чекпоинта {checkpointName}");
+
+        Cursor.visible = false;
 
     }
 
@@ -139,4 +156,36 @@ public class Checkpoint : MonoBehaviour, IInteractable
             Debug.Log($"Checkpoint: игрок покинул радиус чекпоинта {checkpointName}");
         }
     }
+
+    private void UpdateHealUI()
+    {
+        float maxHealth = _playerHealth.MaxHealthInHealth;
+        float currentHealth = _playerHealth.CurrentHealthInHearts;
+        bool isHealthMaxed = maxHealth == currentHealth;
+        if (isHealthMaxed)
+        {
+            healButton.interactable = false;
+            healButton.GetComponentInChildren<Text>().text = "Здоровье полное";
+        }
+        else
+        {
+            healButton.interactable = true;
+            healButton.GetComponentInChildren<Text>().text = "Восстановить";
+        }
+
+        if(currentHealthUI != null) currentHealthUI.text = $"{currentHealth} / {maxHealth}";
+    }
+
+    public void OnHealButtonClicked()
+    {
+        Debug.Log("Button Pressed");
+
+        _playerHealth.Heal(_playerHealth.MaxHealthInHealth);
+        if (_playerHealth != null && isMenuOpen)
+        {
+            UpdateHealUI();
+        }
+    }
+        
+    
 }
